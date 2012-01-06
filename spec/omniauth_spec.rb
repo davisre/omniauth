@@ -52,6 +52,34 @@ describe OmniAuth do
 
       OmniAuth.config.on_failure.call.should == 'yoyo'
     end
+
+    describe 'add_mock' do
+      let(:mock_data) { { :uid => "johndoe" } }
+
+      it "should add a mock to mock_auth" do
+        expect { OmniAuth.config.add_mock :foo, mock_data }.
+          to change { OmniAuth.config.mock_auth.length }.by 1
+      end
+
+      it "should merge the mock with the default" do
+        OmniAuth.config.mock_auth[:default] = { :info => { :name => "John Doe" } }
+        OmniAuth.config.add_mock :foo, mock_data
+        OmniAuth.config.mock_auth[:foo][:info][:name].should == "John Doe"
+      end
+
+      it "should override default values at the top level" do
+        OmniAuth.config.mock_auth[:default] = { :uid => "smithy" }
+        OmniAuth.config.add_mock :foo, mock_data
+        OmniAuth.config.mock_auth[:foo][:uid].should == "johndoe"
+      end
+
+      it "should add the provider as a string to the mock" do
+        OmniAuth.config.add_mock :foo, mock_data
+        OmniAuth.config.mock_auth[:foo][:provider].should == "foo"
+      end
+
+    end
+
   end
 
   describe '::Utils' do

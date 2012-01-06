@@ -58,21 +58,9 @@ module OmniAuth
     end
 
     def add_mock(provider, mock={})
-      # Stringify keys recursively one level.
-      mock.keys.each do |key|
-        mock[key.to_s] = mock.delete(key)
-      end
-      mock.each_pair do |key, val|
-        if val.is_a? Hash
-          val.keys.each do |subkey|
-            val[subkey.to_s] = val.delete(subkey)
-          end
-        end
-      end
-
       # Merge with the default mock and ensure provider is correct.
       mock = self.mock_auth[:default].dup.merge(mock)
-      mock["provider"] = provider.to_s
+      mock[:provider] = provider.to_s
 
       # Add it to the mocks.
       self.mock_auth[provider.to_sym] = mock
